@@ -45,6 +45,12 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
+    // Validate form data
+    if (!formData.name || !formData.bloodGroup || !formData.district || !formData.upazila) {
+      toast.error('Please fill all required fields');
+      return;
+    }
+    
     setLoading(true);
     try {
       let avatarUrl = formData.avatar;
