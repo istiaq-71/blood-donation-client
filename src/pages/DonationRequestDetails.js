@@ -36,11 +36,17 @@ const DonationRequestDetails = () => {
   };
 
   const handleDonate = async () => {
+    // Check if user is already a donor for this request
+    if (request?.donorId && request.donorId.toString() === user?._id) {
+      toast.error('You have already confirmed donation for this request');
+      return;
+    }
+    
     setDonating(true);
     try {
       const response = await api.post(`/donation-requests/${id}/donate`);
       if (response.data.success) {
-        toast.success('Donation confirmed successfully!');
+        toast.success('Donation confirmed successfully! Thank you for your contribution.');
         setShowDonateModal(false);
         fetchRequest();
       }
