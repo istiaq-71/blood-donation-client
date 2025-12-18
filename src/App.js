@@ -19,6 +19,7 @@ import DashboardHome from './pages/Dashboard/DashboardHome';
 import Profile from './pages/Dashboard/Profile';
 import MyDonationRequests from './pages/Dashboard/MyDonationRequests';
 import CreateDonationRequest from './pages/Dashboard/CreateDonationRequest';
+import EditDonationRequest from './pages/Dashboard/EditDonationRequest';
 import AllUsers from './pages/Dashboard/AllUsers';
 import AllBloodDonationRequests from './pages/Dashboard/AllBloodDonationRequests';
 import Funding from './pages/Dashboard/Funding';
@@ -58,6 +59,7 @@ function App() {
             <Route index element={<DashboardHome />} />
             <Route path="profile" element={<Profile />} />
             <Route path="my-donation-requests" element={<MyDonationRequests />} />
+            <Route path="my-donation-requests/edit/:id" element={<EditDonationRequest />} />
             <Route path="create-donation-request" element={<CreateDonationRequest />} />
             
             {/* Admin & Volunteer Routes */}

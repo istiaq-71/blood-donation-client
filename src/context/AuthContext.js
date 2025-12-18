@@ -25,19 +25,75 @@ export const AuthProvider = ({ children }) => {
   const [firebaseUser, setFirebaseUser] = useState(null);
 
   useEffect(() => {
+    // First, try to restore user from localStorage immediately (for page reload)
+    const storedUser = localStorage.getItem('user');
+    const storedToken = localStorage.getItem('token');
+    
+    if (storedUser && storedToken) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        // Set user immediately to prevent redirect to login
+        setUser(parsedUser);
+        // Verify token is still valid in background
+        api.get('/auth/me')
+          .then((response) => {
+            if (response.data.success) {
+              setUser(response.data.data.user);
+              localStorage.setItem('user', JSON.stringify(response.data.data.user));
+            }
+          })
+          .catch(() => {
+            // Token invalid, but don't clear immediately - let Firebase check first
+            console.warn('Token validation failed, checking Firebase auth state...');
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        setLoading(false);
+      }
+    } else {
+      setLoading(false);
+    }
+
+    // Listen to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setFirebaseUser(firebaseUser);
       
       if (firebaseUser) {
         try {
-          const storedUser = localStorage.getItem('user');
-          const storedToken = localStorage.getItem('token');
+          const currentStoredUser = localStorage.getItem('user');
+          const currentStoredToken = localStorage.getItem('token');
           
-          if (storedUser && storedToken) {
-            setUser(JSON.parse(storedUser));
-            setLoading(false);
+          if (currentStoredUser && currentStoredToken) {
+            // User already set from localStorage, just verify
+            try {
+              const response = await api.get('/auth/me');
+              if (response.data.success) {
+                setUser(response.data.data.user);
+                localStorage.setItem('user', JSON.stringify(response.data.data.user));
+              }
+            } catch (error) {
+              // If backend token invalid, try to get new token
+              if (error.response?.status === 401) {
+                // Token expired, but Firebase user still logged in
+                // Try to login again with Firebase
+                const response = await api.post('/auth/login', {
+                  email: firebaseUser.email,
+                  firebaseUID: firebaseUser.uid
+                });
+                if (response.data.success) {
+                  setUser(response.data.data.user);
+                  localStorage.setItem('user', JSON.stringify(response.data.data.user));
+                  localStorage.setItem('token', response.data.data.token);
+                }
+              }
+            }
           } else {
-            // Try to get user from backend
+            // No stored user, fetch from backend
             const response = await api.get('/auth/me');
             if (response.data.success) {
               setUser(response.data.data.user);
@@ -46,8 +102,14 @@ export const AuthProvider = ({ children }) => {
           }
         } catch (error) {
           console.error('Error fetching user:', error);
+          if (error.response?.status === 401) {
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            setUser(null);
+          }
         }
       } else {
+        // Firebase user logged out
         setUser(null);
         localStorage.removeItem('user');
         localStorage.removeItem('token');

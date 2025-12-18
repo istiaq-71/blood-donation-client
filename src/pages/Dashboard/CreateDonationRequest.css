@@ -77,6 +77,25 @@
   margin-top: 1rem;
 }
 
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.form-actions .btn {
+  flex: 1;
+  padding: 0.875rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-light);
+}
+
 @media (max-width: 768px) {
   .create-request-card {
     padding: 1.5rem;
