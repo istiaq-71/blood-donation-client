@@ -57,8 +57,10 @@ const AllBloodDonationRequests = () => {
     });
   };
 
+  // Permission checks
   const canEdit = user?.role === 'admin';
   const canUpdateStatus = user?.role === 'admin' || user?.role === 'volunteer';
+  const canDelete = user?.role === 'admin';
 
   return (
     <div className="all-requests-page">
