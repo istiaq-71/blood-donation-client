@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
@@ -7,6 +7,7 @@ import './Dashboard.css';
 
 const DashboardHome = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [recentRequests, setRecentRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,6 +17,8 @@ const DashboardHome = () => {
   }, []);
 
   const fetchDashboardData = async () => {
+    if (!user) return;
+    
     setLoading(true);
     try {
       if (user?.role === 'admin' || user?.role === 'volunteer') {
@@ -51,6 +54,28 @@ const DashboardHome = () => {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await api.patch(`/donation-requests/${id}/status`, { status: newStatus });
+      toast.success('Status updated successfully');
+      fetchDashboardData();
+    } catch (error) {
+      toast.error('Failed to update status');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this request?')) {
+      try {
+        await api.delete(`/donation-requests/${id}`);
+        toast.success('Request deleted successfully');
+        fetchDashboardData();
+      } catch (error) {
+        toast.error('Failed to delete request');
+      }
+    }
   };
 
   if (loading) {
@@ -112,6 +137,7 @@ const DashboardHome = () => {
                   <th>Time</th>
                   <th>Blood Group</th>
                   <th>Status</th>
+                  <th>Donor Info</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -129,12 +155,52 @@ const DashboardHome = () => {
                       </span>
                     </td>
                     <td>
-                      <Link
-                        to={`/dashboard/my-donation-requests`}
-                        className="action-link"
-                      >
-                        View
-                      </Link>
+                      {request.status === 'inprogress' && request.donorName ? (
+                        <div className="donor-info">
+                          <p>{request.donorName}</p>
+                          <p className="donor-email">{request.donorEmail}</p>
+                        </div>
+                      ) : (
+                        <span className="no-donor">-</span>
+                      )}
+                    </td>
+                    <td>
+                      <div className="action-buttons">
+                        {request.status === 'inprogress' && (
+                          <>
+                            <button
+                              className="btn-action btn-success"
+                              onClick={() => handleStatusChange(request._id, 'done')}
+                            >
+                              Done
+                            </button>
+                            <button
+                              className="btn-action btn-danger"
+                              onClick={() => handleStatusChange(request._id, 'canceled')}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        )}
+                        <button
+                          className="btn-action btn-primary"
+                          onClick={() => navigate(`/dashboard/my-donation-requests/edit/${request._id}`)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="btn-action btn-danger"
+                          onClick={() => handleDelete(request._id)}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          className="btn-action btn-view"
+                          onClick={() => navigate(`/donation-requests/${request._id}`)}
+                        >
+                          View
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
