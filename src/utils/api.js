@@ -28,9 +28,16 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      // Clear auth data and redirect to login
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
+    } else if (error.response?.status === 403) {
+      // Handle forbidden access
+      console.error('Access forbidden:', error.response.data?.message);
+    } else if (error.response?.status >= 500) {
+      // Handle server errors
+      console.error('Server error:', error.response.data?.message);
     }
     return Promise.reject(error);
   }
