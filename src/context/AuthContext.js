@@ -60,6 +60,11 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
+      // Validate required fields
+      if (!userData.email || !userData.password || !userData.name) {
+        throw new Error('All required fields must be filled');
+      }
+      
       // Create Firebase user
       const { email, password } = userData;
       const firebaseCredential = await createUserWithEmailAndPassword(auth, email, password);
