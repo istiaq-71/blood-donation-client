@@ -25,6 +25,7 @@ const DashboardLayout = () => {
     try {
       await logout();
       navigate('/');
+      setSidebarOpen(false);
     } catch (error) {
       console.error('Logout error:', error);
     }
