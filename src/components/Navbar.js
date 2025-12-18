@@ -14,6 +14,7 @@ const Navbar = () => {
     try {
       await logout();
       navigate('/');
+      setUserMenuOpen(false);
     } catch (error) {
       console.error('Logout error:', error);
     }
