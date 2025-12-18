@@ -17,7 +17,7 @@ const Home = () => {
           <p className="banner-subtitle">
             Your single donation can save up to three lives. Join our community of heroes today.
           </p>
-          <div className="banner-buttons">
+          <div className="banner-buttons" data-aos="fade-up" data-aos-delay="300">
             <Link to="/register" className="btn btn-primary">
               Join as a Donor
             </Link>
