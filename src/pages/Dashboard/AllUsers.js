@@ -38,12 +38,18 @@ const AllUsers = () => {
   };
 
   const handleStatusChange = async (userId, newStatus) => {
+    const action = newStatus === 'active' ? 'unblock' : 'block';
+    const confirmed = window.confirm(`Are you sure you want to ${action} this user?`);
+    
+    if (!confirmed) return;
+    
     try {
       await api.patch(`/users/${userId}/status`, { status: newStatus });
       toast.success(`User ${newStatus === 'active' ? 'unblocked' : 'blocked'} successfully`);
       fetchUsers();
     } catch (error) {
-      toast.error('Failed to update user status');
+      const errorMessage = error.response?.data?.message || 'Failed to update user status';
+      toast.error(errorMessage);
     }
   };
 
