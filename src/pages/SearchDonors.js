@@ -30,6 +30,13 @@ const SearchDonors = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    
+    // Validate search form
+    if (!searchData.bloodGroup || !searchData.district || !searchData.upazila) {
+      toast.error('Please fill all search fields');
+      return;
+    }
+    
     setLoading(true);
     setSearched(true);
 
