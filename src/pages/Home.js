@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -6,6 +6,20 @@ import ContactUs from '../components/ContactUs';
 import './Home.css';
 
 const Home = () => {
+  const [imageError, setImageError] = useState(false);
+  const [imageSrc, setImageSrc] = useState('https://i.imgur.com/5Ml6Krl.jpg');
+
+  const handleImageError = () => {
+    if (!imageError) {
+      // Try alternative formats
+      setImageSrc('https://imgur.com/a/5Ml6Krl.jpg');
+      setImageError(true);
+    } else {
+      // Use placeholder
+      setImageSrc('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2NjdmZmYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM0YzYzZGIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNnKSIvPjx0ZXh0IHg9IjUwJSIgeT0iNDAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iYm9sZCI+TUQgSVNUSUFRIEhPU1NBSU48L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIG9wYWNpdHk9IjAuOSI+Rk9VTkRFUiAmIENFTzwvdGV4dD48L3N2Zz4=');
+    }
+  };
+
   return (
     <div className="home">
       <Navbar />
@@ -94,12 +108,11 @@ const Home = () => {
           <div className="ceo-content" data-aos="fade-up">
             <div className="ceo-image-wrapper">
               <img 
-                src="https://i.imgur.com/5Ml6Krl.jpg" 
+                src={imageSrc}
                 alt="Md Istiaq Hossain"
                 className="ceo-image"
-                onError={(e) => {
-                  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5DRU88L3RleHQ+PC9zdmc+';
-                }}
+                onError={handleImageError}
+                loading="lazy"
               />
               <div className="ceo-image-overlay"></div>
             </div>
