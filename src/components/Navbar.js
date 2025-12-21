@@ -14,7 +14,6 @@ const Navbar = () => {
     try {
       await logout();
       navigate('/');
-      setUserMenuOpen(false);
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -23,10 +22,14 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
+        <div 
+          className="navbar-logo"
+          onClick={() => navigate('/')}
+          style={{ cursor: 'pointer' }}
+        >
           <span className="logo-icon">🩸</span>
           <span className="logo-text">BloodDonation</span>
-        </Link>
+        </div>
 
         <div className="navbar-menu">
           <Link to="/donation-requests" className="navbar-link">
