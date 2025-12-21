@@ -88,6 +88,40 @@ const Home = () => {
         </div>
       </section>
 
+      {/* CEO Section */}
+      <section className="ceo-section">
+        <div className="container">
+          <div className="ceo-content" data-aos="fade-up">
+            <div className="ceo-image-wrapper">
+              <img 
+                src="https://i.imgur.com/5Ml6Krl.jpg" 
+                alt="Md Istiaq Hossain"
+                className="ceo-image"
+                onError={(e) => {
+                  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5DRU88L3RleHQ+PC9zdmc+';
+                }}
+              />
+              <div className="ceo-image-overlay"></div>
+            </div>
+            <div className="ceo-info">
+              <div className="ceo-badge">👑 Founder & CEO</div>
+              <h2 className="ceo-name">Md Istiaq Hossain</h2>
+              <p className="ceo-title">Founder And CEO of the Project</p>
+              <div className="ceo-divider"></div>
+              <p className="ceo-message">
+                "Every drop of blood you donate is a lifeline for someone in need. Together, we can build a community where compassion flows as freely as the blood that saves lives. Your generosity today can give someone a tomorrow. Join us in this noble mission to make a real difference, one donation at a time."
+              </p>
+              <div className="ceo-contact">
+                <a href="tel:+8801851880178" className="ceo-phone">
+                  <span className="phone-icon">📞</span>
+                  <span>01851880178</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Us Section */}
       <ContactUs />
 
