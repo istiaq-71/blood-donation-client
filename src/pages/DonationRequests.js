@@ -19,9 +19,8 @@ const DonationRequests = () => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/donation-requests', {
+      const response = await api.get('/donation-requests/public', {
         params: {
-          pendingOnly: 'true',
           page: currentPage,
           limit: 10
         }
@@ -40,9 +39,7 @@ const DonationRequests = () => {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Invalid Date';
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
