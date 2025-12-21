@@ -25,108 +25,79 @@ export const AuthProvider = ({ children }) => {
   const [firebaseUser, setFirebaseUser] = useState(null);
 
   useEffect(() => {
-    // First, try to restore user from localStorage immediately (for page reload)
-    const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('token');
+    let isMounted = true;
     
-    if (storedUser && storedToken) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        // Set user immediately to prevent redirect to login
-        setUser(parsedUser);
-        // Verify token is still valid in background
-        api.get('/auth/me')
-          .then((response) => {
-            if (response.data.success) {
-              setUser(response.data.data.user);
-              localStorage.setItem('user', JSON.stringify(response.data.data.user));
-            }
-          })
-          .catch(() => {
-            // Token invalid, but don't clear immediately - let Firebase check first
-            console.warn('Token validation failed, checking Firebase auth state...');
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      } catch (error) {
-        console.error('Error parsing stored user:', error);
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        setLoading(false);
-      }
-    } else {
-      setLoading(false);
-    }
-
-    // Listen to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!isMounted) return;
+      
       setFirebaseUser(firebaseUser);
       
       if (firebaseUser) {
         try {
-          const currentStoredUser = localStorage.getItem('user');
-          const currentStoredToken = localStorage.getItem('token');
+          const storedUser = localStorage.getItem('user');
+          const storedToken = localStorage.getItem('token');
           
-          if (currentStoredUser && currentStoredToken) {
-            // User already set from localStorage, just verify
-            try {
-              const response = await api.get('/auth/me');
-              if (response.data.success) {
-                setUser(response.data.data.user);
-                localStorage.setItem('user', JSON.stringify(response.data.data.user));
-              }
-            } catch (error) {
-              // If backend token invalid, try to get new token
-              if (error.response?.status === 401) {
-                // Token expired, but Firebase user still logged in
-                // Try to login again with Firebase
-                const response = await api.post('/auth/login', {
-                  email: firebaseUser.email,
-                  firebaseUID: firebaseUser.uid
-                });
-                if (response.data.success) {
-                  setUser(response.data.data.user);
-                  localStorage.setItem('user', JSON.stringify(response.data.data.user));
-                  localStorage.setItem('token', response.data.data.token);
-                }
-              }
+          if (storedUser && storedToken) {
+            if (isMounted) {
+              setUser(JSON.parse(storedUser));
+              setLoading(false);
             }
           } else {
-            // No stored user, fetch from backend
-            const response = await api.get('/auth/me');
-            if (response.data.success) {
-              setUser(response.data.data.user);
-              localStorage.setItem('user', JSON.stringify(response.data.data.user));
+            // Try to get user from backend
+            try {
+              const token = localStorage.getItem('token');
+              if (token) {
+                const response = await api.get('/auth/me');
+                if (response.data.success && isMounted) {
+                  setUser(response.data.data.user);
+                  localStorage.setItem('user', JSON.stringify(response.data.data.user));
+                  setLoading(false);
+                } else if (isMounted) {
+                  setLoading(false);
+                }
+              } else {
+                // No token, set loading to false
+                if (isMounted) {
+                  setLoading(false);
+                }
+              }
+            } catch (apiError) {
+              // If API call fails (401, network error, etc.), clear auth and set loading to false
+              if (isMounted) {
+                console.error('Error fetching user:', apiError);
+                // Only clear if it's an auth error, not network error
+                if (apiError.response?.status === 401) {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                }
+                setLoading(false);
+              }
             }
           }
         } catch (error) {
-          console.error('Error fetching user:', error);
-          if (error.response?.status === 401) {
-            localStorage.removeItem('user');
-            localStorage.removeItem('token');
-            setUser(null);
+          console.error('Error in auth state change:', error);
+          if (isMounted) {
+            setLoading(false);
           }
         }
       } else {
-        // Firebase user logged out
-        setUser(null);
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
+        if (isMounted) {
+          setUser(null);
+          localStorage.removeItem('user');
+          localStorage.removeItem('token');
+          setLoading(false);
+        }
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   const register = async (userData) => {
     try {
-      // Validate required fields
-      if (!userData.email || !userData.password || !userData.name) {
-        throw new Error('All required fields must be filled');
-      }
-      
       // Create Firebase user
       const { email, password } = userData;
       const firebaseCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -154,25 +125,49 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      // Sign in with Firebase
+      // Sign in with Firebase first
       const firebaseCredential = await signInWithEmailAndPassword(auth, email, password);
       
       // Login to backend
-      const response = await api.post('/auth/login', {
-        email,
-        firebaseUID: firebaseCredential.user.uid
-      });
+      try {
+        const response = await api.post('/auth/login', {
+          email,
+          firebaseUID: firebaseCredential.user.uid
+        });
 
-      if (response.data.success) {
-        const { user: loggedInUser, token } = response.data.data;
-        setUser(loggedInUser);
-        localStorage.setItem('user', JSON.stringify(loggedInUser));
-        localStorage.setItem('token', token);
-        toast.success('Login successful!');
-        return { success: true, user: loggedInUser };
+        if (response.data.success) {
+          const { user: loggedInUser, token } = response.data.data;
+          setUser(loggedInUser);
+          localStorage.setItem('user', JSON.stringify(loggedInUser));
+          localStorage.setItem('token', token);
+          toast.success('Login successful!');
+          return { success: true, user: loggedInUser };
+        }
+      } catch (apiError) {
+        // If backend login fails, sign out from Firebase to prevent inconsistent state
+        await firebaseSignOut(auth);
+        const errorMessage = apiError.response?.data?.message || apiError.message || 'Backend login failed. Please check your connection.';
+        toast.error(errorMessage);
+        throw apiError;
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || 'Login failed';
+      // Handle Firebase errors
+      let errorMessage = 'Login failed';
+      
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = 'User not found. Please register first.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address.';
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your connection.';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast.error(errorMessage);
       throw error;
     }

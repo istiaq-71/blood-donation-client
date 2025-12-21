@@ -28,16 +28,23 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear auth data and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    } else if (error.response?.status === 403) {
-      // Handle forbidden access
-      console.error('Access forbidden:', error.response.data?.message);
-    } else if (error.response?.status >= 500) {
-      // Handle server errors
-      console.error('Server error:', error.response.data?.message);
+      // Only redirect if not already on login/register page
+      const currentPath = window.location.pathname;
+      const isAuthPage = currentPath === '/login' || currentPath === '/register';
+      
+      if (!isAuthPage) {
+        // Clear auth data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        
+        // Use setTimeout to prevent immediate redirect during login
+        setTimeout(() => {
+          const newPath = window.location.pathname;
+          if (newPath !== '/login' && newPath !== '/register') {
+            window.location.replace('/login');
+          }
+        }, 100);
+      }
     }
     return Promise.reject(error);
   }
