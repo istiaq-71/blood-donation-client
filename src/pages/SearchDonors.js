@@ -30,18 +30,11 @@ const SearchDonors = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    
-    // Validate search form
-    if (!searchData.bloodGroup || !searchData.district || !searchData.upazila) {
-      toast.error('Please fill all search fields');
-      return;
-    }
-    
     setLoading(true);
     setSearched(true);
 
     try {
-      const response = await api.get('/users', {
+      const response = await api.get('/users/search', {
         params: {
           bloodGroup: searchData.bloodGroup,
           district: searchData.district,
@@ -143,9 +136,12 @@ const SearchDonors = () => {
               {donors.map((donor) => (
                 <div key={donor._id} className="donor-card">
                   <img
-                    src={donor.avatar || 'https://via.placeholder.com/100'}
+                    src={donor.avatar || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Vc2VyPC90ZXh0Pjwvc3ZnPg=='}
                     alt={donor.name}
                     className="donor-avatar"
+                    onError={(e) => {
+                      e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Vc2VyPC90ZXh0Pjwvc3ZnPg==';
+                    }}
                   />
                   <h3 className="donor-name">{donor.name}</h3>
                   <p className="donor-blood-group">Blood Group: {donor.bloodGroup}</p>

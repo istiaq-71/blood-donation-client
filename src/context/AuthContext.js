@@ -117,7 +117,29 @@ export const AuthProvider = ({ children }) => {
         return { success: true, user: newUser };
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || 'Registration failed';
+      let errorMessage = 'Registration failed';
+      
+      // Handle Firebase errors
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'This email is already registered. Please login instead.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address. Please check your email.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Password is too weak. Please use a stronger password.';
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your connection.';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      console.error('Registration error:', {
+        code: error.code,
+        message: error.message,
+        response: error.response?.data
+      });
+      
       toast.error(errorMessage);
       throw error;
     }

@@ -45,12 +45,6 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
-    // Validate form data
-    if (!formData.name || !formData.bloodGroup || !formData.district || !formData.upazila) {
-      toast.error('Please fill all required fields');
-      return;
-    }
-    
     setLoading(true);
     try {
       let avatarUrl = formData.avatar;
@@ -125,9 +119,12 @@ const Profile = () => {
         <div className="profile-content">
           <div className="profile-avatar-section">
             <img
-              src={avatarPreview || 'https://via.placeholder.com/150'}
+              src={avatarPreview || user?.avatar || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Vc2VyPC90ZXh0Pjwvc3ZnPg=='}
               alt={user?.name}
               className="profile-avatar"
+              onError={(e) => {
+                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Vc2VyPC90ZXh0Pjwvc3ZnPg==';
+              }}
             />
             {isEditing && (
               <label className="avatar-upload-label">
