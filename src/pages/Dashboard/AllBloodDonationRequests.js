@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
@@ -6,6 +7,7 @@ import './AllBloodDonationRequests.css';
 
 const AllBloodDonationRequests = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,6 +51,18 @@ const AllBloodDonationRequests = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this request?')) {
+      try {
+        await api.delete(`/donation-requests/${id}`);
+        toast.success('Request deleted successfully');
+        fetchRequests();
+      } catch (error) {
+        toast.error('Failed to delete request');
+      }
+    }
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -57,10 +71,8 @@ const AllBloodDonationRequests = () => {
     });
   };
 
-  // Permission checks
   const canEdit = user?.role === 'admin';
   const canUpdateStatus = user?.role === 'admin' || user?.role === 'volunteer';
-  const canDelete = user?.role === 'admin';
 
   return (
     <div className="all-requests-page">
@@ -101,6 +113,7 @@ const AllBloodDonationRequests = () => {
                   <th>Time</th>
                   <th>Blood Group</th>
                   <th>Status</th>
+                  <th>Donor Info</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -119,6 +132,16 @@ const AllBloodDonationRequests = () => {
                       </span>
                     </td>
                     <td>
+                      {request.status === 'inprogress' && request.donorName ? (
+                        <div className="donor-info">
+                          <p>{request.donorName}</p>
+                          <p className="donor-email">{request.donorEmail}</p>
+                        </div>
+                      ) : (
+                        <span className="no-donor">-</span>
+                      )}
+                    </td>
+                    <td>
                       <div className="action-buttons">
                         {canUpdateStatus && (
                           <select
@@ -131,6 +154,42 @@ const AllBloodDonationRequests = () => {
                             <option value="done">Done</option>
                             <option value="canceled">Canceled</option>
                           </select>
+                        )}
+                        {canEdit && (
+                          <>
+                            <button
+                              className="btn-action btn-primary"
+                              onClick={() => {
+                                // Admin can edit any request, requester can edit their own
+                                if (user?.role === 'admin' || request.requesterId?._id === user?._id || request.requesterId === user?._id) {
+                                  navigate(`/dashboard/my-donation-requests/edit/${request._id}`);
+                                } else {
+                                  toast.error('You can only edit your own requests');
+                                }
+                              }}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="btn-action btn-danger"
+                              onClick={() => {
+                                // Admin can delete any request, requester can delete their own
+                                if (user?.role === 'admin' || request.requesterId?._id === user?._id || request.requesterId === user?._id) {
+                                  handleDelete(request._id);
+                                } else {
+                                  toast.error('You can only delete your own requests');
+                                }
+                              }}
+                            >
+                              Delete
+                            </button>
+                            <button
+                              className="btn-action btn-view"
+                              onClick={() => navigate(`/donation-requests/${request._id}`)}
+                            >
+                              View
+                            </button>
+                          </>
                         )}
                       </div>
                     </td>
