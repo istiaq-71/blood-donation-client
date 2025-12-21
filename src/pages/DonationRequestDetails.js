@@ -15,6 +15,7 @@ const DonationRequestDetails = () => {
   const [loading, setLoading] = useState(true);
   const [showDonateModal, setShowDonateModal] = useState(false);
   const [donating, setDonating] = useState(false);
+  const [donorPhone, setDonorPhone] = useState('');
 
   useEffect(() => {
     fetchRequest();
@@ -36,18 +37,27 @@ const DonationRequestDetails = () => {
   };
 
   const handleDonate = async () => {
-    // Check if user is already a donor for this request
-    if (request?.donorId && request.donorId.toString() === user?._id) {
-      toast.error('You have already confirmed donation for this request');
+    if (!donorPhone.trim()) {
+      toast.error('Please enter your phone number');
       return;
     }
-    
+
+    // Basic phone validation
+    const phoneRegex = /^[0-9]{10,15}$/;
+    if (!phoneRegex.test(donorPhone.replace(/[\s-]/g, ''))) {
+      toast.error('Please enter a valid phone number');
+      return;
+    }
+
     setDonating(true);
     try {
-      const response = await api.post(`/donation-requests/${id}/donate`);
+      const response = await api.post(`/donation-requests/${id}/donate`, {
+        phone: donorPhone.trim()
+      });
       if (response.data.success) {
-        toast.success('Donation confirmed successfully! Thank you for your contribution.');
+        toast.success('Donation confirmed successfully! The requester has been notified.');
         setShowDonateModal(false);
+        setDonorPhone('');
         fetchRequest();
       }
     } catch (error) {
@@ -157,6 +167,12 @@ const DonationRequestDetails = () => {
                     <strong>Donor Email:</strong>
                     <span>{request.donorEmail}</span>
                   </div>
+                  {request.donorPhone && (
+                    <div className="detail-item">
+                      <strong>Donor Phone:</strong>
+                      <span>{request.donorPhone}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -188,21 +204,38 @@ const DonationRequestDetails = () => {
                 <label>Donor Email</label>
                 <input type="email" value={user?.email || ''} disabled className="disabled-input" />
               </div>
+              <div className="form-group">
+                <label>Phone Number <span style={{ color: 'red' }}>*</span></label>
+                <input 
+                  type="tel" 
+                  value={donorPhone}
+                  onChange={(e) => setDonorPhone(e.target.value)}
+                  placeholder="Enter your phone number"
+                  className="form-input"
+                  required
+                />
+                <small style={{ color: '#666', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
+                  The requester will be notified with your contact information
+                </small>
+              </div>
               <p className="modal-message">
-                Are you sure you want to donate blood for this request?
+                Are you sure you want to donate blood for this request? The requester will be notified immediately.
               </p>
             </div>
             <div className="modal-actions">
               <button
                 className="btn btn-secondary"
-                onClick={() => setShowDonateModal(false)}
+                onClick={() => {
+                  setShowDonateModal(false);
+                  setDonorPhone('');
+                }}
               >
                 Cancel
               </button>
               <button
                 className="btn btn-primary"
                 onClick={handleDonate}
-                disabled={donating}
+                disabled={donating || !donorPhone.trim()}
               >
                 {donating ? 'Confirming...' : 'Confirm Donation'}
               </button>
