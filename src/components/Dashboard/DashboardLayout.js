@@ -62,7 +62,12 @@ const DashboardLayout = () => {
     { path: '/dashboard/funding', icon: FiDollarSign, label: 'Funding', roles: ['admin', 'donor', 'volunteer'] }
   );
 
-  const filteredMenuItems = menuItems.filter(item => item.roles.includes(user?.role));
+  // Filter by role and remove duplicates based on path
+  const filteredMenuItems = menuItems
+    .filter(item => item.roles.includes(user?.role))
+    .filter((item, index, self) => 
+      index === self.findIndex(t => t.path === item.path)
+    );
 
   return (
     <div className="dashboard-layout">
