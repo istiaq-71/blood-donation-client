@@ -146,7 +146,31 @@ export const AuthProvider = ({ children }) => {
       } catch (apiError) {
         // If backend login fails, sign out from Firebase to prevent inconsistent state
         await firebaseSignOut(auth);
-        const errorMessage = apiError.response?.data?.message || apiError.message || 'Backend login failed. Please check your connection.';
+        
+        let errorMessage = 'Backend login failed.';
+        
+        // Check for network errors
+        if (!apiError.response) {
+          errorMessage = 'Cannot connect to server. Please check your internet connection and try again.';
+        } else if (apiError.response.status === 404) {
+          errorMessage = 'User not found in database. Please register first.';
+        } else if (apiError.response.status === 403) {
+          errorMessage = 'Your account has been blocked. Please contact admin.';
+        } else if (apiError.response.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        } else if (apiError.response?.data?.message) {
+          errorMessage = apiError.response.data.message;
+        } else if (apiError.message) {
+          errorMessage = apiError.message;
+        }
+        
+        console.error('Backend login error:', {
+          status: apiError.response?.status,
+          message: apiError.response?.data?.message,
+          error: apiError.message,
+          url: apiError.config?.url
+        });
+        
         toast.error(errorMessage);
         throw apiError;
       }
@@ -157,16 +181,26 @@ export const AuthProvider = ({ children }) => {
       if (error.code === 'auth/user-not-found') {
         errorMessage = 'User not found. Please register first.';
       } else if (error.code === 'auth/wrong-password') {
-        errorMessage = 'Incorrect password.';
+        errorMessage = 'Incorrect password. Please try again.';
       } else if (error.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email address.';
+        errorMessage = 'Invalid email address. Please check your email.';
       } else if (error.code === 'auth/network-request-failed') {
-        errorMessage = 'Network error. Please check your connection.';
+        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many failed attempts. Please try again later.';
+      } else if (error.code === 'auth/invalid-credential') {
+        errorMessage = 'Invalid email or password. Please check your credentials.';
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.message) {
         errorMessage = error.message;
       }
+      
+      console.error('Login error:', {
+        code: error.code,
+        message: error.message,
+        response: error.response?.data
+      });
       
       toast.error(errorMessage);
       throw error;

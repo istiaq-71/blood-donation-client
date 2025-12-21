@@ -27,6 +27,27 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Log error for debugging
+    if (error.response) {
+      // Server responded with error status
+      console.error('API Error:', {
+        status: error.response.status,
+        url: error.config?.url,
+        message: error.response.data?.message,
+        data: error.response.data
+      });
+    } else if (error.request) {
+      // Request made but no response received (network error)
+      console.error('Network Error:', {
+        url: error.config?.url,
+        message: 'No response from server. Check your connection or API URL.',
+        apiUrl: API_BASE_URL
+      });
+    } else {
+      // Error in request setup
+      console.error('Request Error:', error.message);
+    }
+
     if (error.response?.status === 401) {
       // Only redirect if not already on login/register page
       const currentPath = window.location.pathname;
