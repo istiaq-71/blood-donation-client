@@ -11,7 +11,9 @@ import {
   FiDollarSign,
   FiLogOut,
   FiMenu,
-  FiX
+  FiX,
+  FiBell,
+  FiClock
 } from 'react-icons/fi';
 import './DashboardLayout.css';
 
@@ -37,8 +39,10 @@ const DashboardLayout = () => {
 
   if (user?.role === 'donor') {
     menuItems.push(
+      { path: '/dashboard/notifications', icon: FiBell, label: 'Notifications', roles: ['donor'] },
       { path: '/dashboard/my-donation-requests', icon: FiDroplet, label: 'My Requests', roles: ['donor'] },
-      { path: '/dashboard/create-donation-request', icon: FiPlusCircle, label: 'Create Request', roles: ['donor'] }
+      { path: '/dashboard/create-donation-request', icon: FiPlusCircle, label: 'Create Request', roles: ['donor'] },
+      { path: '/dashboard/donation-history', icon: FiClock, label: 'Donation History', roles: ['donor'] }
     );
   }
 

@@ -16,6 +16,7 @@ const DonationRequestDetails = () => {
   const [showDonateModal, setShowDonateModal] = useState(false);
   const [donating, setDonating] = useState(false);
   const [donorPhone, setDonorPhone] = useState('');
+  const [donorMessage, setDonorMessage] = useState('');
 
   useEffect(() => {
     fetchRequest();
@@ -52,12 +53,14 @@ const DonationRequestDetails = () => {
     setDonating(true);
     try {
       const response = await api.post(`/donation-requests/${id}/donate`, {
-        phone: donorPhone.trim()
+        phone: donorPhone.trim(),
+        message: donorMessage.trim()
       });
       if (response.data.success) {
         toast.success('Donation confirmed successfully! The requester has been notified.');
         setShowDonateModal(false);
         setDonorPhone('');
+        setDonorMessage('');
         fetchRequest();
       }
     } catch (error) {
@@ -174,6 +177,14 @@ const DonationRequestDetails = () => {
                     </div>
                   )}
                 </div>
+                {request.donorMessage && (
+                  <div style={{ marginTop: '1rem' }}>
+                    <strong>Message from Donor:</strong>
+                    <p className="request-message" style={{ marginTop: '0.5rem' }}>
+                      {request.donorMessage}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -218,6 +229,20 @@ const DonationRequestDetails = () => {
                   The requester will be notified with your contact information
                 </small>
               </div>
+              <div className="form-group">
+                <label>Message to Requester</label>
+                <textarea 
+                  value={donorMessage}
+                  onChange={(e) => setDonorMessage(e.target.value)}
+                  placeholder="Write a message to the requester (optional)"
+                  className="form-input"
+                  rows="4"
+                  style={{ resize: 'vertical' }}
+                />
+                <small style={{ color: '#666', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
+                  This message will be sent to the requester along with your contact information
+                </small>
+              </div>
               <p className="modal-message">
                 Are you sure you want to donate blood for this request? The requester will be notified immediately.
               </p>
@@ -228,6 +253,7 @@ const DonationRequestDetails = () => {
                 onClick={() => {
                   setShowDonateModal(false);
                   setDonorPhone('');
+                  setDonorMessage('');
                 }}
               >
                 Cancel

@@ -23,6 +23,8 @@ import EditDonationRequest from './pages/Dashboard/EditDonationRequest';
 import AllUsers from './pages/Dashboard/AllUsers';
 import AllBloodDonationRequests from './pages/Dashboard/AllBloodDonationRequests';
 import Funding from './pages/Dashboard/Funding';
+import Notifications from './pages/Dashboard/Notifications';
+import DonationHistory from './pages/Dashboard/DonationHistory';
 
 function App() {
   return (
@@ -68,9 +70,11 @@ function App() {
           >
             <Route index element={<DashboardHome />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="notifications" element={<Notifications />} />
             <Route path="my-donation-requests" element={<MyDonationRequests />} />
             <Route path="my-donation-requests/edit/:id" element={<EditDonationRequest />} />
             <Route path="create-donation-request" element={<CreateDonationRequest />} />
+            <Route path="donation-history" element={<DonationHistory />} />
             
             {/* Admin & Volunteer Routes */}
             <Route
