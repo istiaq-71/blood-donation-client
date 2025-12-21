@@ -4,7 +4,7 @@
 Frontend application for the Blood Donation platform built with React. This application provides a user-friendly interface for donors, volunteers, and administrators to manage blood donation activities.
 
 ## Live URL
-[Add your live URL here after deployment]
+(https://blood-donation-client-iota.vercel.app/)
 
 ## Purpose
 The Blood Donation Application connects blood donors with those in need, facilitating a seamless donation process. It enables users to:
