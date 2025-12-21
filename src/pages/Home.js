@@ -6,21 +6,33 @@ import ContactUs from '../components/ContactUs';
 import './Home.css';
 
 const Home = () => {
+  // CEO Image URL - ImageBB direct URL
+  // ImageBB link: https://ibb.co/d0NhbXjW
+  // Direct image URL format: https://i.ibb.co/{hash}/{filename}.jpg
   const [imageError, setImageError] = useState(false);
-  const [imageSrc, setImageSrc] = useState('https://i.imgur.com/w1E2ApE.jpg');
+  
+  // Try multiple image sources - ImageBB direct URLs
+  const imageSources = [
+    'https://i.ibb.co/d0NhbXjW/istiaq-hossain.jpg', // ImageBB direct URL
+    'https://i.ibb.co/d0NhbXjW/istiaq-hossain.png',
+    'https://ibb.co/d0NhbXjW', // Fallback to ImageBB page
+    'https://i.imgur.com/w1E2ApE.jpg', // Old Imgur URL
+    'https://imgur.com/a/w1E2ApE.jpg'
+  ];
+  
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageSrc, setImageSrc] = useState(imageSources[0]);
 
   const handleImageError = () => {
-    if (!imageError) {
-      // Try alternative formats
-      setImageSrc('https://imgur.com/a/w1E2ApE.jpg');
-      setImageError(true);
+    if (currentImageIndex < imageSources.length - 1) {
+      // Try next image source
+      const nextIndex = currentImageIndex + 1;
+      setCurrentImageIndex(nextIndex);
+      setImageSrc(imageSources[nextIndex]);
     } else {
-      // Try PNG format
-      setImageSrc('https://i.imgur.com/w1E2ApE.png');
-      if (imageError) {
-        // Use placeholder
-        setImageSrc('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2NjdmZmYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM0YzYzZGIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNnKSIvPjx0ZXh0IHg9IjUwJSIgeT0iNDAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iYm9sZCI+TUQgSVNUSUFRIEhPU1NBSU48L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIG9wYWNpdHk9IjAuOSI+Rk9VTkRFUiAmIENFTzwvdGV4dD48L3N2Zz4=');
-      }
+      // All sources failed, use placeholder
+      setImageSrc('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2NjdmZmYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM0YzYzZGIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNnKSIvPjx0ZXh0IHg9IjUwJSIgeT0iNDAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iYm9sZCI+TUQgSVNUSUFRIEhPU1NBSU48L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIG9wYWNpdHk9IjAuOSI+Rk9VTkRFUiAmIENFTzwvdGV4dD48L3N2Zz4=');
+      setImageError(true);
     }
   };
 
