@@ -25,7 +25,6 @@ const DashboardLayout = () => {
     try {
       await logout();
       navigate('/');
-      setSidebarOpen(false);
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -66,7 +65,13 @@ const DashboardLayout = () => {
     <div className="dashboard-layout">
       <aside className={`dashboard-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <h2 className="sidebar-logo">🩸 BloodDonation</h2>
+          <h2 
+            className="sidebar-logo"
+            onClick={() => navigate('/')}
+            style={{ cursor: 'pointer' }}
+          >
+            🩸 BloodDonation
+          </h2>
           <button
             className="sidebar-close"
             onClick={() => setSidebarOpen(false)}

@@ -17,12 +17,15 @@ const Home = () => {
           <p className="banner-subtitle">
             Your single donation can save up to three lives. Join our community of heroes today.
           </p>
-          <div className="banner-buttons" data-aos="fade-up" data-aos-delay="300">
+          <div className="banner-buttons">
             <Link to="/register" className="btn btn-primary">
               Join as a Donor
             </Link>
             <Link to="/search-donors" className="btn btn-secondary">
               Search Donors
+            </Link>
+            <Link to="/funding" className="btn btn-secondary">
+              Funding
             </Link>
           </div>
         </div>

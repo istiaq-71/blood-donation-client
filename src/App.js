@@ -46,6 +46,16 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
+          {/* Funding Route - Protected (redirects to dashboard/funding) */}
+          <Route
+            path="/funding"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/dashboard/funding" replace />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Dashboard Routes */}
           <Route
