@@ -48,8 +48,7 @@ const DashboardLayout = () => {
 
   if (user?.role === 'admin') {
     menuItems.push(
-      { path: '/dashboard/all-users', icon: FiUsers, label: 'All Users', roles: ['admin'] },
-      { path: '/dashboard/all-blood-donation-request', icon: FiFileText, label: 'All Requests', roles: ['admin'] }
+      { path: '/dashboard/all-users', icon: FiUsers, label: 'All Users', roles: ['admin'] }
     );
   }
 
