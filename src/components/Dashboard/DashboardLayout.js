@@ -13,7 +13,8 @@ import {
   FiMenu,
   FiX,
   FiBell,
-  FiClock
+  FiClock,
+  FiMail
 } from 'react-icons/fi';
 import './DashboardLayout.css';
 
@@ -48,7 +49,8 @@ const DashboardLayout = () => {
 
   if (user?.role === 'admin') {
     menuItems.push(
-      { path: '/dashboard/all-users', icon: FiUsers, label: 'All Users', roles: ['admin'] }
+      { path: '/dashboard/all-users', icon: FiUsers, label: 'All Users', roles: ['admin'] },
+      { path: '/dashboard/contact-messages', icon: FiMail, label: 'Contact Messages', roles: ['admin'] }
     );
   }
 

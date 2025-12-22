@@ -26,6 +26,7 @@ import AllBloodDonationRequests from './pages/Dashboard/AllBloodDonationRequests
 import Funding from './pages/Dashboard/Funding';
 import Notifications from './pages/Dashboard/Notifications';
 import DonationHistory from './pages/Dashboard/DonationHistory';
+import ContactMessages from './pages/Dashboard/ContactMessages';
 
 function App() {
   return (
@@ -84,6 +85,14 @@ function App() {
               element={
                 <RoleRoute allowedRoles={['admin']}>
                   <AllUsers />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="contact-messages"
+              element={
+                <RoleRoute allowedRoles={['admin']}>
+                  <ContactMessages />
                 </RoleRoute>
               }
             />

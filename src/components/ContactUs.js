@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import api from '../utils/api';
 import './ContactUs.css';
 
 const ContactUs = () => {
@@ -8,6 +9,7 @@ const ContactUs = () => {
     email: '',
     message: ''
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -16,11 +18,22 @@ const ContactUs = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real application, this would send data to backend
-    toast.success('Thank you for your message! We will get back to you soon.');
-    setFormData({ name: '', email: '', message: '' });
+    setLoading(true);
+
+    try {
+      const response = await api.post('/contact-messages', formData);
+      if (response.data.success) {
+        toast.success(response.data.message || 'Thank you for your message! We will get back to you soon.');
+        setFormData({ name: '', email: '', message: '' });
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to send message. Please try again.';
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -80,8 +93,8 @@ const ContactUs = () => {
                 required
               />
             </div>
-            <button type="submit" className="btn btn-primary">
-              Send Message
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? 'Sending...' : 'Send Message'}
             </button>
           </form>
         </div>
