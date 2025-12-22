@@ -48,8 +48,8 @@ const ContactUs = () => {
               <div className="contact-item">
                 <strong>Email:</strong>
                 <span>
-                  <a href="mailto:support@blooddonation.com" style={{ color: 'var(--primary-color)', textDecoration: 'none' }}>
-                    support@blooddonation.com
+                  <a href="mailto:istiaqhossain71@gmail.com" style={{ color: 'var(--primary-color)', textDecoration: 'none' }}>
+                    istiaqhossain71@gmail.com
                   </a>
                 </span>
                 <small style={{ display: 'block', color: 'var(--text-light)', marginTop: '0.25rem', fontSize: '0.85rem' }}>
@@ -58,11 +58,15 @@ const ContactUs = () => {
               </div>
               <div className="contact-item">
                 <strong>Phone:</strong>
-                <span>+880 1234 567890</span>
+                <span>
+                  <a href="tel:+8801851880178" style={{ color: 'var(--primary-color)', textDecoration: 'none' }}>
+                    +8801851880178
+                  </a>
+                </span>
               </div>
               <div className="contact-item">
                 <strong>Address:</strong>
-                <span>Dhaka, Bangladesh</span>
+                <span>Magura, Khulna, Bangladesh</span>
               </div>
             </div>
           </div>
