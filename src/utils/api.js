@@ -62,8 +62,8 @@ api.interceptors.response.use(
         setTimeout(() => {
           const newPath = window.location.pathname;
           if (newPath !== '/login' && newPath !== '/register') {
-            window.location.replace('/login');
-          }
+          window.location.replace('/login');
+        }
         }, 100);
       }
     }

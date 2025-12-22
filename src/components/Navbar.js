@@ -35,6 +35,21 @@ const Navbar = () => {
           <Link to="/donation-requests" className="navbar-link">
             Donation Requests
           </Link>
+          <a 
+            href="/#contact" 
+            className="navbar-link"
+            onClick={(e) => {
+              if (window.location.pathname === '/') {
+                e.preventDefault();
+                const contactSection = document.querySelector('.contact-section');
+                if (contactSection) {
+                  contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }
+            }}
+          >
+            Contact
+          </a>
           
           {user ? (
             <>
@@ -104,6 +119,22 @@ const Navbar = () => {
           >
             Donation Requests
           </Link>
+          <a 
+            href="/#contact" 
+            className="navbar-mobile-link"
+            onClick={(e) => {
+              setMobileMenuOpen(false);
+              if (window.location.pathname === '/') {
+                e.preventDefault();
+                const contactSection = document.querySelector('.contact-section');
+                if (contactSection) {
+                  contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }
+            }}
+          >
+            Contact
+          </a>
           {user ? (
             <>
               <Link
