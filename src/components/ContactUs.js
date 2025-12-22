@@ -43,11 +43,18 @@ const ContactUs = () => {
         <div className="contact-content">
           <div className="contact-info">
             <h3>Get in Touch</h3>
-            <p>Have questions or need assistance? We're here to help!</p>
+            <p>Have questions or need assistance? We're here to help! Please use the form below to send us a message. All messages will be received in our admin panel.</p>
             <div className="contact-details">
               <div className="contact-item">
                 <strong>Email:</strong>
-                <span>support@blooddonation.com</span>
+                <span>
+                  <a href="mailto:support@blooddonation.com" style={{ color: 'var(--primary-color)', textDecoration: 'none' }}>
+                    support@blooddonation.com
+                  </a>
+                </span>
+                <small style={{ display: 'block', color: 'var(--text-light)', marginTop: '0.25rem', fontSize: '0.85rem' }}>
+                  (Please use the form below to ensure your message reaches us)
+                </small>
               </div>
               <div className="contact-item">
                 <strong>Phone:</strong>
