@@ -1,6 +1,5 @@
 // District and Upazila data from https://github.com/nuhil/bangladesh-geocode
 // This data includes all 64 districts and 494 upazilas of Bangladesh
-// Data source: Official Bangladesh government data via bangladesh-geocode repository
 
 export const districts = [
   "Bagerhat",

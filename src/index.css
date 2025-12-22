@@ -74,19 +74,3 @@ input, textarea, select {
   background: var(--text-dark);
 }
 
-/* Loading Spinner */
-.loading-spinner {
-  font-size: 1.125rem;
-  color: var(--text-light);
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-

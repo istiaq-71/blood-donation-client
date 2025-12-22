@@ -116,16 +116,8 @@ const Funding = () => {
 
   const handleDonate = () => {
     const amount = parseFloat(donationAmount);
-    if (!amount || isNaN(amount)) {
-      toast.error('Please enter a valid amount');
-      return;
-    }
-    if (amount < 1) {
-      toast.error('Minimum donation amount is $1');
-      return;
-    }
-    if (amount > 10000) {
-      toast.error('Maximum donation amount is $10,000');
+    if (!amount || amount < 1) {
+      toast.error('Please enter a valid amount (minimum $1)');
       return;
     }
     setShowPaymentModal(true);

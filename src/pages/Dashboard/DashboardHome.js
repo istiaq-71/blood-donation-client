@@ -17,8 +17,6 @@ const DashboardHome = () => {
   }, []);
 
   const fetchDashboardData = async () => {
-    if (!user) return;
-    
     setLoading(true);
     try {
       if (user?.role === 'admin' || user?.role === 'volunteer') {

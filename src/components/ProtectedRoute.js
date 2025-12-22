@@ -10,11 +10,9 @@ const ProtectedRoute = ({ children }) => {
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
-        height: '100vh',
-        flexDirection: 'column',
-        gap: '1rem'
+        height: '100vh' 
       }}>
-        <div className="loading-spinner">Loading...</div>
+        <div>Loading...</div>
       </div>
     );
   }

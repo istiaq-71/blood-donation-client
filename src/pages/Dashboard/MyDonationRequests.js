@@ -41,15 +41,13 @@ const MyDonationRequests = () => {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm('Are you sure you want to delete this donation request? This action cannot be undone.');
-    if (confirmed) {
+    if (window.confirm('Are you sure you want to delete this request?')) {
       try {
         await api.delete(`/donation-requests/${id}`);
-        toast.success('Donation request deleted successfully');
+        toast.success('Request deleted successfully');
         fetchRequests();
       } catch (error) {
-        const errorMessage = error.response?.data?.message || 'Failed to delete request';
-        toast.error(errorMessage);
+        toast.error('Failed to delete request');
       }
     }
   };

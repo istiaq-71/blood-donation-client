@@ -38,17 +38,6 @@ const CreateDonationRequest = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate date is not in the past
-    const selectedDate = new Date(formData.donationDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    if (selectedDate < today) {
-      toast.error('Donation date cannot be in the past');
-      return;
-    }
-    
     setLoading(true);
 
     try {
